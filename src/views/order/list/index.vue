@@ -30,20 +30,24 @@
               :value="2"
             />
             <el-option
-              label="已付款"
+              label="交易中/服务中"
               :value="3"
             />
             <el-option
-              label="已完成"
+              label="待评价"
               :value="4"
             />
             <el-option
-              label="已取消"
+              label="已完成"
               :value="5"
             />
             <el-option
-              label="已拒绝"
+              label="已取消"
               :value="6"
+            />
+            <el-option
+              label="已拒绝"
+              :value="7"
             />
           </el-select>
         </el-form-item>
@@ -80,40 +84,31 @@
         <el-table-column
           prop="id"
           label="订单号"
-          width="100"
+          width="180"
         />
         <el-table-column
-          prop="itemTitle"
+          prop="itemName"
           label="商品名称"
           min-width="180"
           show-overflow-tooltip
         />
         <el-table-column
-          prop="borrowerName"
+          prop="buyerName"
           label="买家"
           width="120"
         />
         <el-table-column
-          prop="ownerName"
+          prop="sellerName"
           label="卖家"
           width="120"
         />
         <el-table-column
-          prop="totalAmount"
+          prop="price"
           label="金额"
           width="100"
         >
           <template #default="{ row }">
-            ¥{{ row.totalAmount }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="deposit"
-          label="担保金额"
-          width="100"
-        >
-          <template #default="{ row }">
-            ¥{{ row.deposit || 0 }}
+            ¥{{ row.price }}
           </template>
         </el-table-column>
         <el-table-column
@@ -182,7 +177,7 @@
       />
       
       <el-divider>订单信息</el-divider>
-      
+
       <el-descriptions
         :column="2"
         border
@@ -199,43 +194,31 @@
           label="商品名称"
           :span="2"
         >
-          {{ currentOrder?.itemTitle }}
+          {{ currentOrder?.itemName }}
         </el-descriptions-item>
         <el-descriptions-item label="买家">
-          {{ currentOrder?.borrowerName }}
+          {{ currentOrder?.buyerName }}
         </el-descriptions-item>
         <el-descriptions-item label="卖家">
-          {{ currentOrder?.lenderName }}
+          {{ currentOrder?.sellerName }}
         </el-descriptions-item>
         <el-descriptions-item label="金额">
-          ¥{{ currentOrder?.totalAmount }}
+          ¥{{ currentOrder?.price }}
         </el-descriptions-item>
-        <el-descriptions-item label="担保金额">
-          ¥{{ currentOrder?.deposit || 0 }}
-        </el-descriptions-item>
-        <el-descriptions-item label="交易天数">
-          {{ currentOrder?.borrowDays }}天
-        </el-descriptions-item>
-        <el-descriptions-item label="计费类型">
-          {{ getBillingTypeText(currentOrder?.billingType) }}
+        <el-descriptions-item label="支付流水号">
+          {{ currentOrder?.payTradeNo || '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="创建时间">
           {{ formatTime(currentOrder?.createdAt) }}
         </el-descriptions-item>
-        <el-descriptions-item label="付款时间">
+        <el-descriptions-item label="确认时间">
+          {{ formatTime(currentOrder?.confirmTime) || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="支付时间">
+          {{ formatTime(currentOrder?.payTime) || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="交付时间">
           {{ formatTime(currentOrder?.borrowTime) || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item label="发货时间">
-          {{ formatTime(currentOrder?.returnTime) || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item label="完成时间">
-          {{ formatTime(currentOrder?.actualReturnTime) || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item
-          label="购买备注"
-          :span="2"
-        >
-          {{ currentOrder?.purpose || '-' }}
         </el-descriptions-item>
         <el-descriptions-item
           v-if="currentOrder?.cancelReason"
@@ -274,10 +257,11 @@ const queryParams = reactive({
 const statusMap: Record<number, { text: string; type: string }> = {
   1: { text: '待确认', type: 'warning' },
   2: { text: '待付款', type: 'primary' },
-  3: { text: '已付款', type: 'success' },
-  4: { text: '已完成', type: 'info' },
-  5: { text: '已取消', type: 'danger' },
-  6: { text: '已拒绝', type: 'danger' }
+  3: { text: '交易中/服务中', type: 'success' },
+  4: { text: '待评价', type: 'info' },
+  5: { text: '已完成', type: 'success' },
+  6: { text: '已取消', type: 'danger' },
+  7: { text: '已拒绝', type: 'danger' }
 }
 
 const getStatusType = (status?: number) => {
@@ -286,16 +270,6 @@ const getStatusType = (status?: number) => {
 
 const getStatusText = (status?: number) => {
   return status ? statusMap[status]?.text || '未知' : '-'
-}
-
-const billingTypeMap: Record<string, string> = {
-  per_day: '按天',
-  per_week: '按周',
-  per_month: '按月'
-}
-
-const getBillingTypeText = (billingType?: string) => {
-  return billingTypeMap[billingType || ''] || '未知'
 }
 
 

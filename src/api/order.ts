@@ -13,10 +13,6 @@ let mockOrderService: any
 
 export interface OrderListParams {
   status?: number
-  itemId?: string
-  borrowerId?: string
-  lenderId?: string
-  type?: string
   keyword?: string
   pageNo: number
   pageSize: number
@@ -30,64 +26,42 @@ export interface OrderListResponse {
   pages: number
 }
 
-// 将后端 billingType 数字映射为前端使用的计费类型枚举
-const mapBillingType = (value: any): Order['billingType'] => {
-  const num = Number(value)
-  switch (num) {
-    case 1:
-      return 'per_day'
-    case 2:
-      return 'per_week'
-    case 3:
-      return 'per_month'
-    default:
-      return 'per_day'
-  }
-}
-
-
-
 /**
  * 获取订单列表
  */
 export function getOrderList(params: OrderListParams): Promise<OrderListResponse> {
   if (isMockMode) {
     return mockOrderService.getOrderList(params)
-  }  
+  }
   return request.get('/os/borrow_orders/list', { params }).then((res: any) => {
     const data = res || {}
     const rawList = data.list || []
 
     const list: Order[] = rawList.map((item: any) => {
       const order: Order = {
-        // 使用后端的 orderNo 作为前端展示的订单号
-        id: String(item.orderNo ?? item.id ?? ''),
+        id: String(item.id ?? ''),
         itemId: String(item.itemId ?? ''),
-        itemTitle: item.itemName,
-        borrowerId: String(item.borrowerId ?? ''),
-        borrowerName: item.borrowerName,
-        lenderId: String(item.lenderId ?? ''),
-        lenderName: item.lenderName,
+        itemName: item.itemName,
+        itemImageUrl: item.itemImageUrl,
+        buyerId: String(item.buyerId ?? ''),
+        buyerName: item.buyerName,
+        buyerAvatarUrl: item.buyerAvatarUrl,
+        sellerId: String(item.sellerId ?? ''),
+        sellerName: item.sellerName,
+        sellerAvatarUrl: item.sellerAvatarUrl,
         title: item.title,
         price: Number(item.price) || 0,
-        billingType: mapBillingType(item.billingType),
-        deposit: item.deposit != null ? Number(item.deposit) : undefined,
-        borrowDays: Number(item.borrowDays) || 0,
-        purpose: item.purpose,
         status: Number(item.status) as Order['status'],
+        purpose: item.purpose,
+        confirmTime: item.confirmTime ? Number(item.confirmTime) : undefined,
+        payTime: item.payTime ? Number(item.payTime) : undefined,
+        payTradeNo: item.payTradeNo,
         borrowTime: item.borrowTime ? Number(item.borrowTime) : undefined,
-        returnTime: item.expectReturnTime ? Number(item.expectReturnTime) : undefined,
-        actualReturnTime: item.actualReturnTime ? Number(item.actualReturnTime) : undefined,
         cancelReason: item.cancelReason ?? undefined,
-        totalAmount: Number(item.totalAmount) || 0,
+        version: item.version,
         createdAt: Number(item.createdAt) || 0,
         updatedAt: Number(item.updatedAt) || 0
       }
-
-      // 附加后端特有字段，便于前端展示使用
-      ;(order as any).orderNo = item.orderNo
-      ;(order as any).itemImages = item.itemImages
-      ;(order as any).ownerName = item.lenderName
 
       return order
     })

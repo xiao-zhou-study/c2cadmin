@@ -27,30 +27,33 @@
     >
       <el-divider>状态操作</el-divider>
       <el-space wrap>
-        <el-button 
+        <!-- 待确认状态 -->
+        <el-button
           v-if="order.status === 1"
-          type="success" 
+          type="success"
           @click="handleConfirm"
         >
           确认订单
         </el-button>
-        
-        <el-button 
+
+        <el-button
           v-if="order.status === 1"
-          type="warning" 
+          type="warning"
           @click="handleReject"
         >
           拒绝订单
         </el-button>
-        
+
+        <!-- 待付款状态 -->
         <el-button
           v-if="order.status === 2"
           type="success"
           @click="handleStartBorrow"
         >
-          确认发货
+          确认交付
         </el-button>
 
+        <!-- 交易中/服务中状态 -->
         <el-button
           v-if="order.status === 3"
           type="success"
@@ -58,29 +61,22 @@
         >
           确认完成
         </el-button>
-        
-        <el-button 
-          v-if="[1, 2].includes(order.status)"
-          type="danger" 
-          @click="handleCancel"
-        >
-          取消订单
-        </el-button>
-        
-        <el-button 
-          v-if="[3, 4].includes(order.status)"
-          type="warning" 
-          @click="handleDispute"
-        >
-          处理纠纷
-        </el-button>
-        
+
         <el-button
           v-if="order.status === 3"
           type="info"
           @click="sendReminder('return')"
         >
           收货提醒
+        </el-button>
+
+        <!-- 可取消状态 -->
+        <el-button
+          v-if="[1, 2].includes(order.status)"
+          type="danger"
+          @click="handleCancel"
+        >
+          取消订单
         </el-button>
       </el-space>
     </div>
@@ -181,24 +177,30 @@ const statusSteps = [
   },
   {
     status: 3,
-    title: '已付款',
-    description: '等待卖家发货',
+    title: '交易中/服务中',
+    description: '买家已付款，等待交付',
     icon: Timer
   },
   {
     status: 4,
+    title: '待评价',
+    description: '交易完成，等待评价',
+    icon: Check
+  },
+  {
+    status: 5,
     title: '已完成',
     description: '交易已完成',
     icon: Check
   },
   {
-    status: 5,
+    status: 6,
     title: '已取消',
     description: '订单已取消',
     icon: Close
   },
   {
-    status: 6,
+    status: 7,
     title: '已拒绝',
     description: '订单被拒绝',
     icon: Close
@@ -207,29 +209,32 @@ const statusSteps = [
 
 const getActiveStep = () => {
   if (!props.order) return 0
-  
+
   const statusStepMap: Record<number, number> = {
-    1: 0, // 申请中
-    2: 1, // 已确认
-    3: 2, // 借用中
-    4: 3, // 已归还
-    5: 4, // 已取消
-    6: 5  // 已拒绝
+    1: 0, // 待确认
+    2: 1, // 待付款
+    3: 2, // 交易中/服务中
+    4: 3, // 待评价
+    5: 4, // 已完成
+    6: 5, // 已取消
+    7: 6  // 已拒绝
   }
-  
+
   return statusStepMap[props.order.status] || 0
 }
 
 const getStepStatus = (stepStatus: number, _index: number) => {
   if (!props.order) return 'wait'
-  
+
+  // 终态显示对应样式
+  if (props.order.status === 7 && stepStatus === 7) return 'error'
   if (props.order.status === 6 && stepStatus === 6) return 'error'
-  if (props.order.status === 5 && stepStatus === 5) return 'error'
-  if (props.order.status === 4 && stepStatus <= 4) return 'finish'
-  if (props.order.status === 3 && stepStatus <= 3) return 'finish'
-  if (props.order.status === 2 && stepStatus <= 2) return 'finish'
-  if (props.order.status === 1 && stepStatus === 1) return 'process'
-  
+  if (props.order.status === 5 && stepStatus === 5) return 'finish'
+
+  // 正常流转：当前步骤之前的都已完成
+  if (stepStatus < props.order.status) return 'finish'
+  if (stepStatus === props.order.status) return 'process'
+
   return 'wait'
 }
 
@@ -322,18 +327,6 @@ const handleCancel = () => {
     await cancelOrder(props.order!.id, reason || '')
     ElMessage.success('取消成功')
     emit('statusChanged')
-  })
-}
-
-const handleDispute = () => {
-  ElMessageBox.prompt('请输入纠纷处理方案', '处理纠纷', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    inputType: 'textarea',
-    inputPlaceholder: '请详细说明处理方案...'
-  }).then(async (_param) => {
-    // 这里应该调用纠纷处理API
-    ElMessage.success('纠纷处理方案已记录')
   })
 }
 

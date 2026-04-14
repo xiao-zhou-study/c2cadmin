@@ -181,27 +181,28 @@ export interface Item {
  * 交易订单 (对应 borrow_orders 表)
  */
 export interface Order {
-  id: string
-  itemId: string
-  itemTitle?: string
-  borrowerId: string // 买家ID
-  borrowerName?: string // 买家名称
-  lenderId: string // 卖家ID
-  lenderName?: string // 卖家名称
-  title: string
-  price: number
-  billingType: 'per_day' | 'per_week' | 'per_month'
-  deposit?: number // 担保金额
-  borrowDays: number
-  purpose?: string // 购买备注
-  status: 1 | 2 | 3 | 4 | 5 | 6 // 1:待确认 2:待付款 3:已付款 4:已完成 5:已取消 6:已拒绝
-  borrowTime?: number // 交易时间
-  returnTime?: number // 预计完成时间
-  actualReturnTime?: number // 实际完成时间
-  cancelReason?: string
-  totalAmount: number
-  createdAt: number
-  updatedAt: number
+  id: string // 订单 ID（唯一商户单号，主键）
+  itemId: string // 关联物品 ID
+  itemName?: string // 物品名称
+  itemImageUrl?: string[] // 物品图片 URL 列表
+  buyerId: string // 买家 ID
+  buyerName?: string // 买家名称
+  buyerAvatarUrl?: string // 买家头像 URL
+  sellerId: string // 卖家 ID
+  sellerName?: string // 卖家名称
+  sellerAvatarUrl?: string // 卖家头像 URL
+  title: string // 订单标题快照
+  price: number // 价格（元）
+  status: 1 | 2 | 3 | 4 | 5 | 6 | 7 // 1:待确认 2:待付款 3:交易中/服务中 4:待评价 5:已完成 6:已取消 7:已拒绝
+  purpose?: string // 备注/用途说明
+  confirmTime?: number // 确认时间戳
+  payTime?: number // 支付成功时间戳
+  payTradeNo?: string // 第三方支付流水号
+  borrowTime?: number // 实际交付/开始时间戳
+  cancelReason?: string // 取消/拒绝原因
+  version?: number // 乐观锁版本号
+  createdAt: number // 创建时间戳
+  updatedAt: number // 更新时间戳
 }
 
 /**
