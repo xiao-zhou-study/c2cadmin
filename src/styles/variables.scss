@@ -1,0 +1,66 @@
+// ========================================
+// 校园二手交易平台 - 全局主题变量
+// 设计风格：清新现代，绿色为主色调
+// ========================================
+
+// 主色调 - 清新绿色系
+$primary-color: #22c55e;
+$primary-light: #4ade80;
+$primary-dark: #16a34a;
+$primary-bg: rgba(34, 197, 94, 0.1);
+
+// 功能色
+$success-color: #22c55e;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$info-color: #6366f1;
+
+// 中性色
+$text-primary: #1a1a1a;
+$text-regular: #4b5563;
+$text-secondary: #9ca3af;
+$text-placeholder: #d1d5db;
+
+// 背景色
+$bg-page: #f8fafc;
+$bg-card: #ffffff;
+$bg-hover: #f1f5f9;
+
+// 边框色
+$border-color: #e5e7eb;
+$border-light: #f3f4f6;
+
+// 侧边栏 - 深色主题
+$sidebar-width: 220px;
+$sidebar-collapsed-width: 70px;
+$sidebar-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+$sidebar-logo-bg: rgba(255, 255, 255, 0.05);
+$sidebar-text-color: #94a3b8;
+$sidebar-active-text-color: #ffffff;
+$sidebar-active-bg: linear-gradient(90deg, $primary-color 0%, $primary-dark 100%);
+$sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+
+// 顶部导航
+$header-height: 56px;
+$header-bg: #ffffff;
+
+// 标签页
+$tagsview-height: 40px;
+$tagsview-bg: #ffffff;
+
+// 圆角
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$radius-xl: 20px;
+
+// 阴影
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+$shadow-primary: 0 4px 14px rgba(34, 197, 94, 0.25);
+
+// 过渡
+$transition-fast: 0.15s ease;
+$transition-normal: 0.25s ease;
+$transition-slow: 0.35s ease;
