@@ -40,10 +40,6 @@
             </div>
             <div class="stat-card__label">用户总数</div>
           </div>
-          <div class="stat-card__trend stat-card__trend--up">
-            <el-icon><CaretTop /></el-icon>
-            <span>活跃用户</span>
-          </div>
         </div>
       </el-col>
       <el-col
@@ -61,10 +57,6 @@
               <span class="count-up">{{ animatedStats.itemCount }}</span>
             </div>
             <div class="stat-card__label">商品总数</div>
-          </div>
-          <div class="stat-card__trend stat-card__trend--up">
-            <el-icon><CaretTop /></el-icon>
-            <span>在售中</span>
           </div>
         </div>
       </el-col>
@@ -84,10 +76,6 @@
             </div>
             <div class="stat-card__label">订单总数</div>
           </div>
-          <div class="stat-card__trend stat-card__trend--up">
-            <el-icon><CaretTop /></el-icon>
-            <span>交易中</span>
-          </div>
         </div>
       </el-col>
       <el-col
@@ -106,12 +94,6 @@
               <span class="count-up">{{ formatAmount(animatedStats.totalAmount) }}</span>
             </div>
             <div class="stat-card__label">交易总额</div>
-          </div>
-          <div class="stat-card__footer">
-            <div class="today-amount">
-              <el-icon><TrendCharts /></el-icon>
-              <span>今日交易 ¥{{ formatAmount(stats.todayAmount) }}</span>
-            </div>
           </div>
         </div>
       </el-col>
